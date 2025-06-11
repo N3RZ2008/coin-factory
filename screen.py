@@ -15,17 +15,21 @@ class Screen:
         self.incrementLabel.pack()
         self.coinFactoryButton = ttk.Button(root, text=f"Buy Coin Factory ({self.game.coinFactoryCost} coins)", command=lambda: self.tryBuy("CFQ", self.game.coinFactoryCost))
         self.coinFactoryButton.pack()
-        debugButton = ttk.Button(root, text= "Debug", command=self.debug).pack()
+        self.timeElapsedUp = ttk.Button(root, text= f"Multiplier based on time elapsed ({self.game.upgradeCostsList["timeElapsedUp"]} coins)", command=lambda: self.tryBuy("TEU", self.game.upgradeCostsList["timeElapsedUp"]))
+        self.timeElapsedUp.pack()
+        # debugButton = ttk.Button(root, text= "Debug", command=self.debug).pack()
 
     def updateScreen(self):
         self.coinsLabel.config(text=f'{self.game.coins:.2f}')
         self.coinFactoryButton.config(text=f"Buy Coin Factory ({self.game.coinFactoryCost} coins)")
         self.incrementLabel.config(text=f"You're gaining {self.game.increment * 1000:.2f} coin each second")
+        if (self.game.upgradeList["timeElapsedUp"]):
+            self.timeElapsedUp.config(text="Multiplier based on time elapsed (Bought)")
     
     def schedule(self):
+        self.game.upgradesUpdate()
         self.game.coinIncrement()
         self.updateScreen()
-        # self.time = 1000 / self.game.speed
         self.root.after(1, self.schedule)
     
     def tryBuy(self, target, cost):
